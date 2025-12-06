@@ -8,10 +8,8 @@ import { SearchBar } from './components/SearchBar';
 import { CategoryGroup } from './components/CategoryGroup';
 import { Modal } from './components/Modal';
 import { SettingsModal } from './components/SettingsModal';
-import { AiResult } from './components/AiResult';
 import { Clock } from './components/Clock';
 import { AboutModal } from './components/AboutModal';
-import { generateAnswer } from './services/geminiService';
 
 const STORAGE_KEY_DATA = 'astralis_data';
 const STORAGE_KEY_ENGINES = 'astralis_engines';
@@ -49,8 +47,8 @@ const App: React.FC = () => {
     }
     // Get default categories based on the saved language or browser language
     const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
-    const language = savedSettings 
-      ? JSON.parse(savedSettings).language 
+    const language = savedSettings
+      ? JSON.parse(savedSettings).language
       : (navigator.language.startsWith('zh') ? 'zh' : 'en');
     return getDefaultCategories(language);
   });
@@ -66,21 +64,17 @@ const App: React.FC = () => {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   // Modals State
-  const [isAddLinkModalOpen, setIsAddLinkModalOpen] = useState(false);
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [isAddEngineModalOpen, setIsAddEngineModalOpen] = useState(false);
 
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
-
-  // AI State
-  const [aiResultOpen, setAiResultOpen] = useState(false);
-  const [aiQuery, setAiQuery] = useState('');
-  const [aiResponse, setAiResponse] = useState('');
-  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [editingLink, setEditingLink] = useState<Link | null>(null);
 
   // Form State
   const [newLinkTitle, setNewLinkTitle] = useState('');
   const [newLinkUrl, setNewLinkUrl] = useState('');
+  const [newLinkIconUrl, setNewLinkIconUrl] = useState('');
   const [newCategoryTitle, setNewCategoryTitle] = useState('');
 
   const [newEngineName, setNewEngineName] = useState('');
@@ -158,15 +152,6 @@ const App: React.FC = () => {
     setSettings(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleAiSearch = async (query: string) => {
-    setIsAiLoading(true);
-    setAiQuery(query);
-    const response = await generateAnswer(query, t.systemInstruction);
-    setAiResponse(response);
-    setIsAiLoading(false);
-    setAiResultOpen(true);
-  };
-
   // --- Data Management ---
   const handleExportData = () => {
     const data = {
@@ -223,16 +208,7 @@ const App: React.FC = () => {
     const dragged = dragItem.current;
     if (!dragged) return;
 
-    // Logic for reordering categoriestsx
-{/* 示例：在渲染每个链接的地方 */}
-{link.icon ? (
-  <img src={link.icon} alt={link.title} className="link-icon" />
-) : (
-  // 可以显示一个占位符，或者使用 CSS 为没有图标的链接提供默认样式
-  <span className="link-icon-placeholder">{link.title.charAt(0)}</span>
-)}
-<span>{link.title}</span>
-
+    // Logic for reordering categories
     if (dragged.type === 'category' && type === 'category') {
       const sourceIndex = categories.findIndex(c => c.id === dragged.id);
       const targetIndex = categories.findIndex(c => c.id === targetId);
@@ -267,15 +243,27 @@ const App: React.FC = () => {
     dragItem.current = null;
   };
 
-  // --- CRUD Handlers (Existing) ---
+  // --- Link/Shortcut Handlers ---
   const handleAddLinkClick = (categoryId: string) => {
     setActiveCategoryId(categoryId);
-    setIsAddLinkModalOpen(true);
+    setEditingLink(null);
     setNewLinkTitle('');
     setNewLinkUrl('');
+    setNewLinkIconUrl('');
+    setIsLinkModalOpen(true);
   };
 
-  const submitNewLink = (e: React.FormEvent) => {
+  const handleEditLinkClick = (link: Link, categoryId: string) => {
+    setActiveCategoryId(categoryId);
+    setEditingLink(link);
+    setNewLinkTitle(link.title);
+    setNewLinkUrl(link.url);
+    setNewLinkIconUrl(link.icon || '');
+    setIsLinkModalOpen(true);
+  };
+
+
+  const submitLink = (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeCategoryId || !newLinkTitle || !newLinkUrl) return;
 
@@ -284,20 +272,40 @@ const App: React.FC = () => {
       urlToUse = 'https://' + urlToUse;
     }
 
-    const newLink: Link = {
-      id: Date.now().toString(),
-      title: newLinkTitle,
-      url: urlToUse
-    };
+    // If editing an existing link
+    if (editingLink) {
+      const updatedLink = { 
+        ...editingLink, 
+        title: newLinkTitle, 
+        url: urlToUse, 
+        icon: newLinkIconUrl || undefined 
+      };
+      setCategories(prev => prev.map(cat => {
+        if (cat.id === activeCategoryId) {
+          return { 
+            ...cat, 
+            links: cat.links.map(l => l.id === editingLink.id ? updatedLink : l) 
+          };
+        }
+        return cat;
+      }));
+    } else {
+      // If adding a new link
+      const newLink: Link = {
+        id: Date.now().toString(),
+        title: newLinkTitle,
+        url: urlToUse,
+        icon: newLinkIconUrl || undefined
+      };
+      setCategories(prev => prev.map(cat => {
+        if (cat.id === activeCategoryId) {
+          return { ...cat, links: [...cat.links, newLink] };
+        }
+        return cat;
+      }));
+    }
 
-    setCategories(prev => prev.map(cat => {
-      if (cat.id === activeCategoryId) {
-        return { ...cat, links: [...cat.links, newLink] };
-      }
-      return cat;
-    }));
-
-    setIsAddLinkModalOpen(false);
+    setIsLinkModalOpen(false);
   };
 
   const deleteLink = (categoryId: string, linkId: string) => {
@@ -310,6 +318,7 @@ const App: React.FC = () => {
     }));
   };
 
+  // --- Category Handlers ---
   const submitNewCategory = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCategoryTitle) return;
@@ -330,6 +339,7 @@ const App: React.FC = () => {
     setCategories(prev => prev.filter(c => c.id !== categoryId));
   };
 
+  // --- Search Engine Handlers ---
   const handleAddEngineClick = () => {
     setIsAddEngineModalOpen(true);
     setNewEngineName('');
@@ -406,7 +416,7 @@ const App: React.FC = () => {
             {isEditing ? <Settings2 size={20} strokeWidth={1.5} /> : <LayoutGrid size={20} strokeWidth={1.5} />}
           </button>
         )}
-        
+
         {/* Settings Button */}
         <button
           onClick={() => setIsSettingsOpen(true)}
@@ -433,8 +443,6 @@ const App: React.FC = () => {
         {/* Search Bar */}
         <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100">
           <SearchBar
-            onAiResult={handleAiSearch}
-            isAiLoading={isAiLoading}
             searchEngines={searchEngines}
             isEditing={isEditing}
             onAddEngineClick={handleAddEngineClick}
@@ -459,6 +467,7 @@ const App: React.FC = () => {
                   category={category}
                   isEditing={isEditing}
                   onAddLink={handleAddLinkClick}
+                  onEditLink={handleEditLinkClick}
                   onDeleteLink={deleteLink}
                   onDeleteCategory={deleteCategory}
                   openInNewTab={settings.openLinksInNewTab}
@@ -499,13 +508,13 @@ const App: React.FC = () => {
         onImport={handleImportData}
       />
 
-      {/* Add Link Modal */}
+      {/* Add/Edit Link Modal */}
       <Modal
-        isOpen={isAddLinkModalOpen}
-        onClose={() => setIsAddLinkModalOpen(false)}
-        title={t.addShortcut}
+        isOpen={isLinkModalOpen}
+        onClose={() => setIsLinkModalOpen(false)}
+        title={editingLink ? t.editShortcut : t.addShortcut}
       >
-        <form onSubmit={submitNewLink} className="space-y-4">
+        <form onSubmit={submitLink} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">{t.title}</label>
             <input
@@ -528,8 +537,19 @@ const App: React.FC = () => {
               placeholder="reddit.com"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">{t.iconUrl}</label>
+            <p className="text-xs text-gray-500 dark:text-zinc-500 mb-2">{t.iconUrlHelp}</p>
+            <input
+              type="text"
+              value={newLinkIconUrl}
+              onChange={(e) => setNewLinkIconUrl(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-gray-400 dark:focus:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white transition-colors"
+              placeholder="https://... or data:image/png;base64,..."
+            />
+          </div>
           <button type="submit" className="w-full py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-80 transition-opacity font-medium">
-            {t.addLink}
+            {editingLink ? t.saveChanges : t.addLink}
           </button>
         </form>
       </Modal>
@@ -604,15 +624,6 @@ const App: React.FC = () => {
           </button>
         </form>
       </Modal>
-
-      {/* AI Result Modal */}
-      <AiResult
-        isOpen={aiResultOpen}
-        onClose={() => setAiResultOpen(false)}
-        query={aiQuery}
-        response={aiResponse}
-        t={t}
-      />
 
       {/* About Modal */}
       <AboutModal

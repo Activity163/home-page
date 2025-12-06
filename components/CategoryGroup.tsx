@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { Plus, Trash2, Globe, ExternalLink, GripHorizontal } from 'lucide-react';
-import { Category, LayoutMode } from '../types';
+import { Plus, Trash2, Globe, ExternalLink, GripHorizontal, Pencil } from 'lucide-react';
+import { Category, Link, LayoutMode } from '../types';
 import { TranslationType } from '../translations';
 
 interface CategoryGroupProps {
@@ -9,42 +9,42 @@ interface CategoryGroupProps {
   isEditing: boolean;
   onDeleteLink: (categoryId: string, linkId: string) => void;
   onAddLink: (categoryId: string) => void;
+  onEditLink: (link: Link, categoryId: string) => void;
   onDeleteCategory: (categoryId: string) => void;
   openInNewTab: boolean;
   showFavicons: boolean;
   layoutMode: LayoutMode;
   t: TranslationType;
-  // Drag & Drop props
   onDragStart: (e: React.DragEvent, type: 'category' | 'link', id: string, parentId?: string) => void;
   onDragOver: (e: React.DragEvent, type: 'category' | 'link', id: string) => void;
   onDrop: (e: React.DragEvent, type: 'category' | 'link', id: string, parentId?: string) => void;
 }
 
-// Internal component to handle image fallback gracefully
-const Favicon: React.FC<{ url: string; title: string; className?: string }> = ({ url, title, className }) => {
+const Favicon: React.FC<{ link: Link; className?: string }> = ({ link, className }) => {
   const [error, setError] = useState(false);
 
   const getFaviconUrl = (u: string) => {
     try {
       const domain = new URL(u).hostname;
-      // Corrected Google Favicon API URL
       return `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${domain}&size=128`;
     } catch {
       return '';
     }
   };
 
-  if (error || !url) {
+  const imgSrc = link.icon ? link.icon : getFaviconUrl(link.url);
+
+  if (error || !imgSrc) {
     return (
       <div className={`flex items-center justify-center bg-gray-100 dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 rounded-full ${className}`}>
-        <span className="font-bold uppercase text-xs sm:text-sm">{title.charAt(0)}</span>
+        <span className="font-bold uppercase text-xs sm:text-sm">{link.title.charAt(0)}</span>
       </div>
     );
   }
 
   return (
     <img
-      src={getFaviconUrl(url)}
+      src={imgSrc}
       alt=""
       className={`object-contain rounded-md ${className}`}
       onError={() => setError(true)}
@@ -57,6 +57,7 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
   isEditing,
   onDeleteLink,
   onAddLink,
+  onEditLink,
   onDeleteCategory,
   openInNewTab,
   showFavicons,
@@ -67,7 +68,6 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
   onDrop
 }) => {
 
-  // Grid configuration based on layout mode
   const gridClasses = {
     card: 'grid-cols-3 sm:grid-cols-3 gap-3',
     list: 'grid-cols-1 gap-2',
@@ -85,7 +85,6 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
       onDrop={(e) => onDrop(e, 'category', category.id)}
     >
 
-      {/* Category Header */}
       <div className="flex justify-between items-center mb-4 pl-1">
         <h3 className="font-semibold text-gray-700 dark:text-zinc-200 text-sm tracking-wide flex items-center gap-2 select-none">
           {isEditing && <GripHorizontal size={14} className="text-gray-400" />}
@@ -112,7 +111,7 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
             className={`relative group/link w-full ${isEditing ? 'cursor-grab active:cursor-grabbing' : ''}`}
             draggable={isEditing}
             onDragStart={(e) => {
-              e.stopPropagation(); // Prevent category drag
+              e.stopPropagation();
               onDragStart(e, 'link', link.id, category.id);
             }}
             onDragOver={(e) => {
@@ -128,11 +127,16 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
               href={link.url}
               target={isEditing ? "_self" : (openInNewTab ? "_blank" : "_self")}
               rel={openInNewTab ? "noopener noreferrer" : undefined}
-              onClick={(e) => isEditing && e.preventDefault()}
+              onClick={(e) => {
+                if (isEditing) {
+                  e.preventDefault();
+                  onEditLink(link, category.id);
+                }
+              }}
               className={`
                 flex items-center relative overflow-hidden transition-all duration-200 w-full outline-none focus-visible:ring-2 ring-blue-500/50
                 ${isEditing
-                  ? 'bg-gray-50/50 dark:bg-zinc-800/30 cursor-default border border-dashed border-gray-300 dark:border-zinc-700 opacity-80'
+                  ? 'bg-gray-50/50 dark:bg-zinc-800/30 cursor-pointer border border-dashed border-gray-300 dark:border-zinc-700 opacity-80 hover:opacity-100'
                   : 'bg-white dark:bg-zinc-800/40 border border-transparent hover:border-gray-200 dark:hover:border-zinc-700 hover:shadow-lg dark:hover:shadow-black/40 hover:bg-white dark:hover:bg-zinc-800'
                 }
                 
@@ -149,7 +153,6 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
                 ` : ''}
               `}
             >
-              {/* --- Icon Rendering --- */}
               {showFavicons && (
                 <div className={`
                   flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover/link:scale-110
@@ -158,14 +161,12 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
                   ${layoutMode === 'compact' ? 'w-4 h-4' : ''}
                 `}>
                   <Favicon
-                    url={link.url}
-                    title={link.title}
+                    link={link}
                     className="w-full h-full"
                   />
                 </div>
               )}
 
-              {/* --- Text Rendering --- */}
               <div className={`
                  flex flex-col overflow-hidden
                  ${layoutMode === 'card' ? 'items-center text-center w-full' : ''}
@@ -181,7 +182,6 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
                   {link.title}
                 </span>
 
-                {/* URL Subtitle (Only for List Mode) */}
                 {layoutMode === 'list' && (
                   <span className="text-[10px] text-gray-400 dark:text-zinc-500 truncate w-full max-w-[200px]">
                     {new URL(link.url).hostname.replace('www.', '')}
@@ -189,13 +189,17 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
                 )}
               </div>
 
-              {/* Hover Indicator (Only List Mode) */}
               {!isEditing && layoutMode === 'list' && (
                 <ExternalLink size={12} className="opacity-0 group-hover/link:opacity-100 text-gray-300 dark:text-zinc-600 absolute right-3 transition-opacity" />
               )}
+
+              {isEditing && (
+                 <div className="absolute inset-0 bg-black/20 dark:bg-black/50 flex items-center justify-center opacity-0 group-hover/link:opacity-100 transition-opacity">
+                   <Pencil size={layoutMode === 'card' ? 20 : 16} className="text-white" />
+                 </div>
+              )}
             </a>
 
-            {/* Delete Button (Edit Mode) */}
             {isEditing && (
               <button
                 onClick={(e) => {
@@ -210,7 +214,6 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
           </div>
         ))}
 
-        {/* --- Add Button (Edit Mode) --- */}
         {isEditing && (
           <button
             onClick={() => onAddLink(category.id)}
