@@ -28,7 +28,7 @@ const Favicon: React.FC<{ url: string; title: string; className?: string }> = ({
     try {
       const domain = new URL(u).hostname;
       // Corrected Google Favicon API URL
-      return `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${domain}&size=128`;
+      return `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${domain}&size=128`;
     } catch {
       return '';
     }

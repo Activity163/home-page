@@ -612,30 +612,6 @@ const App: React.FC = () => {
         t={t}
         onExportData={handleExportData}
       />
-
-      {/* Footer - Copyright & About */}
-      <footer className={`
-        fixed bottom-0 left-0 right-0 z-30 py-3 px-6 flex items-center justify-center gap-4 text-xs
-        backdrop-blur-sm border-t transition-all duration-300
-        ${settings.customWallpaper 
-          ? 'text-white bg-black/40 border-white/10 [&>span]:drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] [&>button]:drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]' 
-          : 'text-gray-400 dark:text-zinc-600 bg-white/30 dark:bg-black/30 border-gray-100/50 dark:border-zinc-800/50'
-        }
-      `}>
-        <span>{t.copyright}</span>
-        <span className={settings.customWallpaper ? 'text-white/60' : 'text-gray-300 dark:text-zinc-700'}>|</span>
-        <button
-          onClick={() => setIsAboutOpen(true)}
-          className={`flex items-center gap-1.5 transition-colors ${
-            settings.customWallpaper 
-              ? 'hover:text-white/80' 
-              : 'hover:text-gray-600 dark:hover:text-zinc-400'
-          }`}
-        >
-          <Info size={14} />
-          <span>{t.about}</span>
-        </button>
-      </footer>
     </div>
   );
 };
