@@ -76,7 +76,7 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
 
   return (
     <div
-      className={`bg-white/70 dark:bg-zinc-900/60 backdrop-blur-xl rounded-3xl p-5 shadow-sm border border-white/50 dark:border-zinc-800/50 transition-all duration-300 relative group h-fit flex flex-col
+      className={`bg-white/30 dark:bg-zinc-900/30 backdrop-blur-md rounded-3xl p-5 shadow-sm border border-white/50 dark:border-zinc-800/50 transition-all duration-300 relative group h-fit flex flex-col
           ${isEditing ? 'cursor-move hover:border-dashed hover:border-gray-400 dark:hover:border-zinc-600' : ''}
         `}
       draggable={isEditing}

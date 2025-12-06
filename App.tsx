@@ -223,7 +223,16 @@ const App: React.FC = () => {
     const dragged = dragItem.current;
     if (!dragged) return;
 
-    // Logic for reordering categories
+    // Logic for reordering categoriestsx
+{/* 示例：在渲染每个链接的地方 */}
+{link.icon ? (
+  <img src={link.icon} alt={link.title} className="link-icon" />
+) : (
+  // 可以显示一个占位符，或者使用 CSS 为没有图标的链接提供默认样式
+  <span className="link-icon-placeholder">{link.title.charAt(0)}</span>
+)}
+<span>{link.title}</span>
+
     if (dragged.type === 'category' && type === 'category') {
       const sourceIndex = categories.findIndex(c => c.id === dragged.id);
       const targetIndex = categories.findIndex(c => c.id === targetId);
