@@ -87,7 +87,9 @@ export const TRANSLATIONS = {
     dataManagementDesc: "You have full control over your data:",
     clearCache: "Clear All Data",
     clearCacheConfirm: "This will delete all your settings and bookmarks. This action cannot be undone. Continue?",
-    aboutFooter: "Astralis - Your minimalist dashboard for a focused web experience."
+    aboutFooter: "Astralis - Your minimalist dashboard for a focused web experience.",
+    showLunar: "Show Lunar Calendar",
+    showSeconds: "Show Seconds",
   },
   zh: {
     appTitle: "星域",
@@ -174,7 +176,9 @@ export const TRANSLATIONS = {
     dataManagementDesc: "您可以完全控制您的数据：",
     clearCache: "清除所有数据",
     clearCacheConfirm: "这将删除您的所有设置和书签。此操作无法撤销。确定继续吗？",
-    aboutFooter: "Astralis - 您的极简仪表盘，专注的网络体验。"
+    aboutFooter: "Astralis - 您的极简仪表盘，专注的网络体验。",
+    showLunar: "显示农历",
+    showSeconds: "显示秒钟",
   }
 };
 

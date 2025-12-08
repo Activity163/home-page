@@ -39,4 +39,6 @@ export interface AppSettings {
   customWallpaper: string;
   wallpaperBlur: boolean;
   greetingName: string;
+  showLunar: boolean;
+  showSeconds: boolean;
 }

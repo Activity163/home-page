@@ -9,9 +9,11 @@ interface ClockProps {
   t: TranslationType;
   hasCustomWallpaper: boolean;
   language: Language;
+  showLunar: boolean;
+  showSeconds: boolean;
 }
 
-export const Clock: React.FC<ClockProps> = ({ name, t, hasCustomWallpaper, language }) => {
+export const Clock: React.FC<ClockProps> = ({ name, t, hasCustomWallpaper, language, showLunar, showSeconds }) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export const Clock: React.FC<ClockProps> = ({ name, t, hasCustomWallpaper, langu
     return date.toLocaleTimeString(language === 'zh' ? 'zh-CN' : 'en-US', {
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit',
+      second: showSeconds ? '2-digit' : undefined,
       hour12: false
     });
   };
@@ -39,7 +41,7 @@ export const Clock: React.FC<ClockProps> = ({ name, t, hasCustomWallpaper, langu
       weekday: 'long'
     });
 
-    const lunarDate = language === 'zh' ? `${lunar.getYearInChinese()}年${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}` : '';
+    const lunarDate = language === 'zh' ? `${lunar.getYearInGanZhi()}年（${lunar.getYearShengXiao()}年）${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}` : '';
 
     return {
       westernDate,
@@ -75,7 +77,7 @@ export const Clock: React.FC<ClockProps> = ({ name, t, hasCustomWallpaper, langu
         <p className="text-lg md:text-xl font-light tracking-wide opacity-95">
           {westernDate}
         </p>
-        {lunarDate && (
+        {showLunar && lunarDate && (
           <p className="text-sm font-light tracking-wide opacity-80">
             {lunarDate}
           </p>

@@ -25,7 +25,9 @@ const DEFAULT_SETTINGS: AppSettings = {
   showShortcuts: true,
   customWallpaper: '',
   wallpaperBlur: false,
-  greetingName: ''
+  greetingName: '',
+  showLunar: true,
+  showSeconds: false,
 };
 
 const App: React.FC = () => {
@@ -437,6 +439,8 @@ const App: React.FC = () => {
             t={t}
             hasCustomWallpaper={!!settings.customWallpaper}
             language={settings.language}
+            showLunar={settings.showLunar}
+            showSeconds={settings.showSeconds}
           />
         </div>
 
