@@ -3,7 +3,7 @@ import { Language } from './types';
 
 export const TRANSLATIONS = {
   en: {
-    appTitle: "Astralis",
+    appTitle: "章鱼哥の主页",
     appSubtitle: "Explore your digital universe",
     searchPlaceholder: "Search %s...",
     searchPlaceholderAI: "Ask Gemini anything...",
@@ -96,7 +96,7 @@ export const TRANSLATIONS = {
     customIconPlaceholder: "Leave blank to use default",
   },
   zh: {
-    appTitle: "星域",
+    appTitle: "章鱼哥の主页",
     appSubtitle: "探索你的数字宇宙",
     searchPlaceholder: "在 %s 中搜索...",
     searchPlaceholderAI: "向 Gemini 提问...",

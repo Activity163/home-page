@@ -24,6 +24,7 @@ Astralis 是一个优雅的极简主义浏览器起始页，专注于提供简�
 - 🌓 **主题切换** - 支持浅色/深色/跟随系统三种主题模式
 - 🔍 **多搜索引擎** - 集成 Google、Baidu、Bing 等主流搜索引擎
 - ⚡ **快速访问** - 自定义网站分类和快捷链接
+- ✏️ **完全个性化** - 自定义昵称、壁纸、网站标题和图标
 - 🎨 **极简设计** - 清爽的界面，专注于内容本身
 - 📱 **响应式布局** - 完美适配桌面和移动设备
 - 💾 **本地存储** - 所有设置保存在本地，保护隐私
@@ -118,6 +119,7 @@ Astralis is an elegant minimalist browser start page focused on providing a clea
 - 🌓 **Theme Switching** - Light/Dark/System theme modes
 - 🔍 **Multiple Search Engines** - Integrated Google, Baidu, Bing and more
 - ⚡ **Quick Access** - Customizable website categories and shortcuts
+- ✏️ **Full Personalization** - Customize your name, wallpaper, site title, and icon
 - 🎨 **Minimalist Design** - Clean interface focused on content
 - 📱 **Responsive Layout** - Perfect for desktop and mobile devices
 - 💾 **Local Storage** - All settings saved locally for privacy

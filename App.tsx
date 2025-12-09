@@ -28,6 +28,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   greetingName: '',
   showLunar: true,
   showSeconds: false,
+  customTitle: '',
+  customIcon: '',
 };
 
 const App: React.FC = () => {
@@ -98,6 +100,15 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
   }, [settings]);
+
+  // Update title and icon
+  useEffect(() => {
+    document.title = settings.customTitle || '章鱼哥の主页';
+    const link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+    if (link) {
+      link.href = settings.customIcon || '/favicon.svg';
+    }
+  }, [settings.customTitle, settings.customIcon]);
 
   // Auto-translate default category titles when language changes
   useEffect(() => {
