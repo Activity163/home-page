@@ -90,6 +90,10 @@ export const TRANSLATIONS = {
     aboutFooter: "Astralis - Your minimalist dashboard for a focused web experience.",
     showLunar: "Show Lunar Calendar",
     showSeconds: "Show Seconds",
+    customTitle: "Website Title",
+    customIcon: "Website Icon",
+    customTitlePlaceholder: "Leave blank to use default",
+    customIconPlaceholder: "Leave blank to use default",
   },
   zh: {
     appTitle: "星域",
@@ -179,6 +183,10 @@ export const TRANSLATIONS = {
     aboutFooter: "Astralis - 您的极简仪表盘，专注的网络体验。",
     showLunar: "显示农历",
     showSeconds: "显示秒钟",
+    customTitle: "网站标题",
+    customIcon: "网站图标",
+    customTitlePlaceholder: "留空则使用默认",
+    customIconPlaceholder: "留空则使用默认",
   }
 };
 

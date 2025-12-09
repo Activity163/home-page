@@ -144,6 +144,26 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 placeholder="e.g. Alex"
               />
             </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">{t.customTitle}</label>
+              <input
+                type="text"
+                value={settings.customTitle || ''}
+                onChange={(e) => updateSettings('customTitle', e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 bg-gray-50 dark:bg-zinc-900 text-gray-900 dark:text-white"
+                placeholder={t.customTitlePlaceholder}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">{t.customIcon}</label>
+              <input
+                type="text"
+                value={settings.customIcon || ''}
+                onChange={(e) => updateSettings('customIcon', e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 bg-gray-50 dark:bg-zinc-900 text-gray-900 dark:text-white"
+                placeholder={t.customIconPlaceholder}
+              />
+            </div>
           </div>
 
           {/* General Section */}

@@ -1,4 +1,4 @@
-import { Category, SearchEngine, Language } from './types';
+import { AppSettings, Category, SearchEngine, Language } from './types';
 
 export const DEFAULT_SEARCH_ENGINES: SearchEngine[] = [
   {
@@ -89,3 +89,20 @@ export const getDefaultCategories = (language: Language = 'en'): Category[] => {
 
 // For backward compatibility
 export const DEFAULT_CATEGORIES = getDefaultCategories('en');
+
+export const DEFAULT_APP_SETTINGS: AppSettings = {
+  language: 'en',
+  theme: 'system',
+  layoutMode: 'card',
+  showFavicons: true,
+  showShortcuts: true,
+  openSearchInNewTab: true,
+  openLinksInNewTab: true,
+  customWallpaper: '',
+  wallpaperBlur: false,
+  greetingName: '',
+  showLunar: false,
+  showSeconds: false,
+  customTitle: '',
+  customIcon: '',
+};

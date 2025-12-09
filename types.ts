@@ -41,4 +41,6 @@ export interface AppSettings {
   greetingName: string;
   showLunar: boolean;
   showSeconds: boolean;
+  customTitle: string;
+  customIcon: string;
 }
